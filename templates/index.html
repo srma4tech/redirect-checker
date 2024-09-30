@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Redirect Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function toggleInput() {
+            const singleUrlInput = document.getElementById('single-url-input');
+            const fileUploadInput = document.getElementById('file-upload-input');
+            const singleUrlRadio = document.getElementById('single-url-radio');
+            if (singleUrlRadio.checked) {
+                singleUrlInput.style.display = 'block';
+                fileUploadInput.style.display = 'none';
+            } else {
+                singleUrlInput.style.display = 'none';
+                fileUploadInput.style.display = 'block';
+            }
+        }
+
+        async function checkSingleURL() {
+            const url = document.getElementById('single-url').value;
+            const response = await fetch('/check_single_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `url=${encodeURIComponent(url)}`,
+            });
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('result').innerHTML = `
+                    <p><strong>Main URL:</strong> ${result['Main URL']}</p>
+                    <p><strong>Redirect Status:</strong> ${result['Redirect Status']}</p>
+                    <p><strong>Redirected To URL:</strong> ${result['Redirected To URL']}</p>
+                `;
+            } else {
+                document.getElementById('result').innerHTML = `<p>Error: ${result.error}</p>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleInput();
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>URL Redirect Checker</h1>
+        <div class="input-selection">
+            <label>
+                <input type="radio" name="input-type" id="single-url-radio" value="single" checked onclick="toggleInput()"> Single URL
+            </label>
+            <label>
+                <input type="radio" name="input-type" id="file-upload-radio" value="file" onclick="toggleInput()"> File for Multi URLs
+            </label>
+        </div>
+        <div id="single-url-input">
+            <h2>Check Single URL</h2>
+            <input type="text" id="single-url" placeholder="Enter URL">
+            <button onclick="checkSingleURL()">Check</button>
+            <div id="result"></div>
+        </div>
+        <div id="file-upload-input" style="display: none;">
+            <h2>Upload a file with URLs</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="file-input">
+                    <input type="file" name="file" id="file">
+                </div>
+                <div class="submit-button">
+                    <input type="submit" value="Upload">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
