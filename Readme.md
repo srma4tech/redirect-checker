@@ -27,8 +27,8 @@ URL Redirect Checker is a web-based tool that allows users to upload a text file
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/yourusername/url-redirect-checker.git
-    cd url-redirect-checker
+    git clone https://github.com/srma4tech/redirect-checker.git
+    cd redirect-checker
     ```
 
 2. **Create a virtual environment** (optional but recommended):
